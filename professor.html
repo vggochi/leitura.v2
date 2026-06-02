@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel do Professor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background: #020617;
+        color: #fff;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      .blur-circle {
+        position: fixed;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        filter: blur(140px);
+        z-index: -1;
+      }
+      .blue {
+        background: #2563eb;
+        top: -100px;
+        left: -100px;
+      }
+      .purple {
+        background: #9333ea;
+        bottom: -100px;
+        right: -100px;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25px 50px;
+      }
+      .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+        background: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn {
+        background: #2563eb;
+        border: none;
+        color: #fff;
+        padding: 14px 22px;
+        border-radius: 16px;
+        cursor: pointer;
+      }
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 40px 20px;
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .hero h1 {
+        font-size: 58px;
+      }
+      .hero span {
+        color: #60a5fa;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 50px;
+        border-radius: 35px;
+        backdrop-filter: blur(20px);
+      }
+      .card h2 {
+        margin-bottom: 30px;
+        font-size: 34px;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      input {
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+      }
+      button {
+        padding: 18px;
+        border: none;
+        border-radius: 18px;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-blue {
+        background: #2563eb;
+      }
+      .btn-green {
+        background: #16a34a;
+      }
+      .dashboard {
+        display: none;
+        margin-top: 35px;
+      }
+      .dashboard-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 40px;
+        border-radius: 30px;
+      }
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 42px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="blur-circle blue"></div>
+    <div class="blur-circle purple"></div>
+
+    <nav class="navbar">
+      <div class="logo-area">
+        <div class="logo">📚</div>
+        <h2>Leitura SESI</h2>
+      </div>
+      <button class="btn" onclick="window.location.href = 'index.html'">
+        Voltar
+      </button>
+    </nav>
+
+    <div class="container">
+      <div class="hero">
+        <h1>Painel do <span>Professor</span></h1>
+        <p>Faça login ou crie sua conta.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>👨‍🏫 Entrar</h2>
+          <div class="form-group">
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="Digite seu email"
+            />
+            <input
+              type="password"
+              id="loginSenha"
+              placeholder="Digite sua senha"
+            />
+            <button class="btn-blue" onclick="loginProfessor()">Entrar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>✨ Criar Conta</h2>
+          <div class="form-group">
+            <input type="text" id="cadNome" placeholder="Nome completo" />
+            <input type="email" id="cadEmail" placeholder="Email" />
+            <input type="password" id="cadSenha" placeholder="Senha" />
+            <button class="btn-green" onclick="cadastrarProfessor()">
+              Criar Conta
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="dashboardProfessor" class="dashboard">
+        <div class="dashboard-card">
+          <h2 id="nomeProfessor">Professor</h2>
+          <p>Você está autenticado.</p>
+          <button
+            class="btn-blue"
+            onclick="window.location.href = 'turmas.html'"
+          >
+            📚 Gerenciar Turmas
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = "https://apileiturav2.vercel.app/api";
+      let professor = null;
+
+      async function cadastrarProfessor() {
+        const nome = cadNome.value,
+          email = cadEmail.value,
+          senha = cadSenha.value;
+        const res = await fetch(`${API_URL}/professores`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome, email, senha }),
+        });
+        const data = await res.json();
+        alert(data.erro || "Professor cadastrado com sucesso!");
+      }
+
+      async function loginProfessor() {
+        const email = loginEmail.value,
+          senha = loginSenha.value;
+        const res = await fetch(`${API_URL}/professores/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, senha }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.erro);
+          return;
+        }
+        professor = data.professor;
+        localStorage.setItem("professor", JSON.stringify(professor));
+        dashboardProfessor.style.display = "block";
+        nomeProfessor.innerText = "👨‍🏫 " + professor.nome;
+      }
+
+      window.onload = () => {
+        const salvo = localStorage.getItem("professor");
+        if (salvo) {
+          professor = JSON.parse(salvo);
+          dashboardProfessor.style.display = "block";
+          nomeProfessor.innerText = "👨‍🏫 " + professor.nome;
+        }
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Leitura SESI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #020617;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .blur-circle {
+        position: fixed;
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        filter: blur(140px);
+        z-index: -1;
+      }
+
+      .blue {
+        background: #2563eb;
+        top: -100px;
+        left: -100px;
+      }
+
+      .purple {
+        background: #9333ea;
+        bottom: -100px;
+        right: -100px;
+      }
+
+      .navbar {
+        width: 100%;
+        padding: 25px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(20px);
+        z-index: 999;
+      }
+
+      .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo {
+        width: 50px;
+        height: 50px;
+        background: #2563eb;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+
+      .navbar button {
+        background: #2563eb;
+        border: none;
+        color: white;
+        padding: 15px 24px;
+        border-radius: 18px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .navbar button:hover {
+        transform: translateY(-2px);
+      }
+
+      .hero {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 50px;
+        gap: 50px;
+      }
+
+      .hero-left {
+        flex: 1;
+      }
+
+      .badge {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+        padding: 12px 18px;
+        border-radius: 999px;
+      }
+
+      .hero-left h1 {
+        font-size: 70px;
+        line-height: 1.1;
+        margin: 25px 0;
+      }
+
+      .hero-left h1 span {
+        color: #3b82f6;
+      }
+
+      .hero-left p {
+        color: #94a3b8;
+        max-width: 600px;
+        font-size: 18px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        gap: 20px;
+        margin-top: 35px;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        padding: 18px 28px;
+        border-radius: 18px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        transition: 0.3s;
+      }
+
+      .primary-btn {
+        background: #2563eb;
+      }
+
+      .secondary-btn {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .primary-btn:hover,
+      .secondary-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .dashboard-preview {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        width: 420px;
+        padding: 30px;
+        border-radius: 30px;
+        backdrop-filter: blur(20px);
+      }
+
+      .preview-header {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .progress-area {
+        margin-top: 30px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 999px;
+        overflow: hidden;
+        margin: 15px 0;
+      }
+
+      .progress-fill {
+        width: 75%;
+        height: 100%;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+      }
+
+      .login-section {
+        padding: 100px 40px;
+      }
+
+      .login-card {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        overflow: hidden;
+        border-radius: 35px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .login-left,
+      .login-right {
+        flex: 1;
+        padding: 60px;
+      }
+
+      .login-left {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+      }
+
+      .login-left h2 {
+        font-size: 50px;
+      }
+
+      .login-right {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .login-right input {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 18px;
+        border-radius: 18px;
+        margin-bottom: 18px;
+        color: white;
+      }
+
+      .login-right button {
+        background: #2563eb;
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        color: white;
+        cursor: pointer;
+      }
+
+      .green-btn {
+        background: #16a34a !important;
+      }
+
+      .divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+        margin: 35px 0;
+      }
+
+      .dashboard-section {
+        padding: 50px;
+      }
+
+      .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 40px;
+      }
+
+      .dashboard-card {
+        padding: 30px;
+        border-radius: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .dashboard-card h2 {
+        font-size: 42px;
+      }
+
+      .dashboard-card span {
+        font-size: 50px;
+      }
+
+      .blue-gradient {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+      }
+
+      .green-gradient {
+        background: linear-gradient(135deg, #16a34a, #22c55e);
+      }
+
+      .orange-gradient {
+        background: linear-gradient(135deg, #ea580c, #f59e0b);
+      }
+
+      .register-card,
+      .chart-card,
+      .ranking-card {
+        background: #0f172a;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 30px;
+        padding: 30px;
+        margin-top: 30px;
+      }
+
+      .register-form {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .register-form input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.06);
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        color: white;
+      }
+
+      .register-form button {
+        background: #2563eb;
+        border: none;
+        padding: 18px 30px;
+        border-radius: 18px;
+        color: white;
+        cursor: pointer;
+      }
+
+      #ranking {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .rank-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 900px) {
+        .hero {
+          flex-direction: column;
+        }
+
+        .hero-left h1 {
+          font-size: 50px;
+        }
+
+        .dashboard-preview {
+          width: 100%;
+        }
+
+        .login-card {
+          flex-direction: column;
+        }
+
+        .register-form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="blur-circle blue"></div>
+
+    <div class="blur-circle purple"></div>
+
+    <nav class="navbar">
+      <div class="logo-area">
+        <div class="logo">📚</div>
+
+        <h1>Leitura SESI</h1>
+      </div>
+
+      <div style="display: flex; gap: 10px">
+        <button onclick="irDashboard()">Dashboard</button>
+
+        <button onclick="abrirProfessor()">Professor</button>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-left">
+        <span class="badge"> 🚀 Projeto SENAI • SESI </span>
+
+        <h1>
+          Transformando
+          <span>leitura</span>
+          em competição saudável
+        </h1>
+
+        <p>
+          Registre seus minutos diários, acompanhe rankings e ajude sua turma.
+        </p>
+
+        <div class="hero-buttons">
+          <button class="primary-btn" onclick="irDashboard()">
+            Ver Dashboard
+          </button>
+
+          <button class="secondary-btn" onclick="irParaRanking()">
+            🏆 Ver Ranking
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="dashboard-preview">
+          <div class="preview-header">
+            <div id="nome-preview">👦 Aluno</div>
+
+            <div>📚 Leitura</div>
+          </div>
+
+          <div class="progress-area">
+            <div>Meta diária</div>
+
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+
+            <span> Máximo 16 minutos por dia </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-section" id="login-section">
+      <div class="login-card">
+        <div class="login-left">
+          <h2>Entrar</h2>
+
+          <p>Faça login para registrar seus minutos.</p>
+        </div>
+
+        <div class="login-right">
+          <input type="text" id="rm" placeholder="Digite seu RM" />
+          <input type="password" id="senha" placeholder="Digite sua senha" />
+
+          <button onclick="login()">Entrar</button>
+
+          <div class="divider"></div>
+
+          <h3>Criar conta</h3>
+
+          <br />
+
+          <input type="text" id="nomeCadastro" placeholder="Seu nome" />
+
+          <input type="text" id="rmCadastro" placeholder="Seu RM" />
+
+          <input type="email" id="emailCadastro" placeholder="Seu email" />
+
+          <input type="number" id="turmaCadastro" placeholder="ID da turma" />
+
+          <input type="password" id="senhaCadastro" placeholder="Sua senha" />
+
+          <button class="green-btn" onclick="cadastrar()">Criar conta</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-section" id="dashboard">
+      <h1 style="font-size: 45px; margin-bottom: 20px">📊 Dashboard</h1>
+
+      <div class="dashboard-cards">
+        <div class="dashboard-card blue-gradient">
+          <div>
+            <p>Total da Escola</p>
+
+            <h2 id="valor-total-escola">0</h2>
+          </div>
+
+          <span> 📚 </span>
+        </div>
+
+        <div class="dashboard-card green-gradient">
+          <div>
+            <p>Meta Escola</p>
+
+            <h2 id="valor-meta-escola">0%</h2>
+          </div>
+
+          <span> 🎯 </span>
+        </div>
+
+        <div class="dashboard-card orange-gradient">
+          <div>
+            <p>Ranking</p>
+
+            <h2 id="ranking-posicao">#1</h2>
+          </div>
+
+          <span> 🏆 </span>
+        </div>
+      </div>
+
+      <div class="register-card">
+        <h2>Registrar leitura</h2>
+
+        <div class="register-form">
+          <input type="number" id="minutos" placeholder="Digite os minutos" />
+
+          <button onclick="registrarLeitura()">Registrar</button>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h2>Evolução semanal</h2>
+
+        <br />
+
+        <canvas id="grafico"></canvas>
+      </div>
+
+      <div class="ranking-card" id="ranking-section">
+        <h2>🏆 Ranking das Turmas</h2>
+
+        <div id="ranking"></div>
+      </div>
+    </section>
+
+    <script>
+      const API_URL = "https://apileiturav2.vercel.app/api";
+
+      let alunoLogado = null;
+
+      let grafico;
+
+      function irDashboard() {
+        if (!alunoLogado) {
+          alert("Faça login primeiro.");
+
+          return;
+        }
+
+        document.getElementById("dashboard").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      function irParaRanking() {
+        document.getElementById("ranking-section").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      async function login() {
+        const rm = document.getElementById("rm").value;
+        const senha = document.getElementById("senha").value;
+
+        if (!rm || !senha) {
+          alert("Preencha RM e senha.");
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              rm,
+              senha,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.erro);
+            return;
+          }
+
+          alunoLogado = data.aluno;
+
+          document.getElementById("nome-preview").innerText =
+            `👦 ${alunoLogado.nome}`;
+
+          alert(`✅ Bem-vindo ${alunoLogado.nome}`);
+
+          carregarEstatisticas();
+          carregarRanking();
+          carregarGrafico();
+
+          irDashboard();
+        } catch (error) {
+          console.log(error);
+          alert("Erro ao logar.");
+        }
+      }
+
+      async function cadastrar() {
+        const nome = document.getElementById("nomeCadastro").value;
+
+        const rm = document.getElementById("rmCadastro").value;
+
+        const email = document.getElementById("emailCadastro").value;
+
+        const turma_id = document.getElementById("turmaCadastro").value;
+
+        const senha = document.getElementById("senhaCadastro").value;
+
+        if (!nome || !rm || !email || !turma_id || !senha) {
+          alert("Preencha todos os campos.");
+
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/alunos`, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              nome,
+              rm,
+              email,
+              senha,
+              turma_id,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.erro);
+            return;
+          }
+
+          alert("✅ Conta criada com sucesso!");
+        } catch (error) {
+          console.log(error);
+
+          alert("Erro ao cadastrar.");
+        }
+      }
+
+      async function registrarLeitura() {
+        if (!alunoLogado) {
+          alert("Faça login.");
+
+          return;
+        }
+
+        const minutos = parseInt(document.getElementById("minutos").value);
+
+        if (!minutos) {
+          alert("Digite os minutos.");
+
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_URL}/registrar`, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              aluno_id: alunoLogado.id,
+
+              minutos,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            alert(data.erro);
+            return;
+          }
+
+          alert("✅ Leitura registrada!");
+
+          document.getElementById("minutos").value = "";
+
+          carregarEstatisticas();
+
+          carregarRanking();
+
+          carregarGrafico();
+        } catch (error) {
+          console.log(error);
+
+          alert("Erro ao registrar.");
+        }
+      }
+
+      async function carregarEstatisticas() {
+        try {
+          const res = await fetch(`${API_URL}/estatisticas`);
+
+          const data = await res.json();
+
+          const total = data.total_escola || 0;
+
+          const porcentagem = (total / 1000000) * 100;
+
+          document.getElementById("valor-total-escola").innerText =
+            total.toLocaleString("pt-BR");
+
+          document.getElementById("valor-meta-escola").innerText =
+            porcentagem.toFixed(2) + "%";
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      async function carregarRanking() {
+  try {
+    const res = await fetch(`${API_URL}/ranking`);
+    const ranking = await res.json();
+
+    ranking.sort((a, b) => b.minutos - a.minutos);
+
+    const div = document.getElementById("ranking");
+    div.innerHTML = "";
+
+    ranking.forEach((item, index) => {
+      div.innerHTML += `
+        <div class="rank-item">
+          <h3>#${index + 1} • Turma ${item.turma_id}</h3>
+          <strong>${item.minutos} min</strong>
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+      async function carregarGrafico() {
+  try {
+    const res = await fetch(`${API_URL}/leituras`);
+    const leituras = await res.json();
+
+    // ordenar por data
+    leituras.sort((a, b) => new Date(a.data_registro) - new Date(b.data_registro));
+
+    const mapa = {};
+
+    for (const item of leituras) {
+      const dia = new Date(item.data_registro).toLocaleDateString("pt-BR");
+
+      mapa[dia] = (mapa[dia] || 0) + item.minutos;
+    }
+
+    const labels = Object.keys(mapa);
+    const dados = Object.values(mapa);
+
+    const ctx = document.getElementById("grafico");
+
+    // 🔥 evita bug de canvas duplicado
+    if (grafico) {
+      grafico.destroy();
+      grafico = null;
+    }
+
+    grafico = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Minutos lidos",
+            data: dados,
+            borderColor: "#3b82f6",
+            backgroundColor: "rgba(59,130,246,.2)",
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        animation: false, // 🔥 deixa mais “real-time”
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+      function abrirProfessor() {
+        window.location.href = "professor.html";
+      }
+
+      // 🔄 atualiza tudo automaticamente a cada 10 segundos
+setInterval(() => {
+  if (alunoLogado) {
+    carregarEstatisticas();
+    carregarRanking();
+    carregarGrafico();
+  }
+}, 10000);
+    </script>
+  </body>
+</html>
